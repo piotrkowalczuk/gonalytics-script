@@ -117,7 +117,7 @@ Gowik.prototype.push = function() {
         if (xmlHttp.readyState==4 && xmlHttp.status==200) {
             var gowikVisitId = xmlHttp.getResponseHeader('Gowik-Visit-Id');
             var expiry = new Date();
-            expiry.setTime(expiry.getTime()+(60*1000)); // Ten minutes
+            expiry.setTime(expiry.getTime()+(60*1000*3)); // 30 minutes
             document.cookie = "gowikVisitId="+gowikVisitId+";expires=" + expiry.toGMTString()+";path=/";
         }
     }

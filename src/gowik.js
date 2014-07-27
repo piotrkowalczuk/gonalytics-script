@@ -1,10 +1,15 @@
-function Gowik(gowikHost) {
+function Gowik(gowikHost, siteId) {
     var browser = this.getBrowser();
     var device = this.getDevice();
     var operatingSystem = this.getOperatingSystem();
 
     this.gowikHost = gowikHost;
+    this.siteId = siteId;
     this.values = {
+        trackerSiteId: {
+            value: this.siteId,
+            sname: 't.sid'
+        },
         visitId: {
             value: this.getVisitId(),
             sname: 'v.id'
@@ -402,4 +407,3 @@ Gowik.prototype.getVisitId = function () {
     }
     return "";
 }
-

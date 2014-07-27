@@ -1,0 +1,23 @@
+{
+  "name": "gowik-script",
+  "version": "0.0.1",
+  "authors": [
+    "Piotr Kowalczuk <p.kowalczuk.priv@gmail.com>"
+  ],
+  "description": "Frontend part of Gowik analytic tool.",
+  "main": "gowik.js",
+  "keywords": [
+    "gowik",
+    "analytic",
+    "tracking",
+    "pixel"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

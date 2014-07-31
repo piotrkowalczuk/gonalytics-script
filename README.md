@@ -12,9 +12,12 @@ Installation
     var gonalytics = new Gonalytics('http://tracker.addres', siteId);
     gonalytics.push();
 
+Setup
+--------
+    npm install -d
+    
 Grunt tasks
 --------
-
 #### Build
 
     grunt

@@ -1,9 +1,9 @@
-function Gowik(gowikHost, siteId) {
+function Gonalytics(trackerHost, siteId) {
     var browser = this.getBrowser();
     var device = this.getDevice();
     var operatingSystem = this.getOperatingSystem();
 
-    this.gowikHost = gowikHost;
+    this.trackerHost = trackerHost;
     this.siteId = siteId;
     this.values = {
         trackerSiteId: {
@@ -109,30 +109,30 @@ function Gowik(gowikHost, siteId) {
     };
 };
 
-Gowik.prototype.push = function() {
+Gonalytics.prototype.push = function() {
     var xmlHttp = new XMLHttpRequest();
 
     xmlHttp.open("GET", this.getUrl(), true);
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState==4 && xmlHttp.status==200) {
-            var gowikVisitId = xmlHttp.getResponseHeader('Gowik-Visit-Id');
+            var visitId = xmlHttp.getResponseHeader('Gonalytics-Visit-Id');
             var expiry = new Date();
             expiry.setTime(expiry.getTime()+(60*1000*3)); // 30 minutes
-            document.cookie = "gowikVisitId="+gowikVisitId+";expires=" + expiry.toGMTString()+";path=/";
+            document.cookie = "gonalyticsVisitId="+visitId+";expires=" + expiry.toGMTString()+";path=/";
         }
     }
     xmlHttp.send(null);
     return;
 }
 
-Gowik.prototype.getUrl = function() {
+Gonalytics.prototype.getUrl = function() {
     var now = new Date().getTime();
     var random = Math.random() * 99999999999;
 
-    return this.gowikHost + '/track?' + this.mapValuesToQueryString();
+    return this.trackerHost + '/track?' + this.mapValuesToQueryString();
 }
 
-Gowik.prototype.mapValuesToQueryString = function() {
+Gonalytics.prototype.mapValuesToQueryString = function() {
     var _this = this;
     var queryString = '';
 
@@ -143,7 +143,7 @@ Gowik.prototype.mapValuesToQueryString = function() {
     return queryString;
 }
 
-Gowik.prototype.getLanguage = function() {
+Gonalytics.prototype.getLanguage = function() {
     if (typeof navigator.userLanguage == "string") {
 	       return(navigator.userLanguage);
     } else if (typeof navigator.language == "string") {
@@ -153,7 +153,7 @@ Gowik.prototype.getLanguage = function() {
     }
 }
 
-Gowik.prototype.getBrowser = function() {
+Gonalytics.prototype.getBrowser = function() {
     var
         nAgt = navigator.userAgent,                         // store user agent [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0]
         browser = navigator.appName,                        // browser string [Netscape]
@@ -248,7 +248,7 @@ Gowik.prototype.getBrowser = function() {
     };
 }
 
-Gowik.prototype.getDevice = function () {
+Gonalytics.prototype.getDevice = function () {
     var
         i,
         nVer = navigator.appVersion,
@@ -326,7 +326,7 @@ Gowik.prototype.getDevice = function () {
     };
 }
 
-Gowik.prototype.getOperatingSystem = function () {
+Gonalytics.prototype.getOperatingSystem = function () {
     var nVer = navigator.appVersion;
     var nAgt = navigator.userAgent;
     var osVersion = "unknown";
@@ -397,8 +397,8 @@ Gowik.prototype.getOperatingSystem = function () {
     };
 }
 
-Gowik.prototype.getVisitId = function () {
-    var name = "gowikVisitId=";
+Gonalytics.prototype.getVisitId = function () {
+    var name = "gonalyticsVisitId=";
     var ca = document.cookie.split(';');
     for(var i=0; i<ca.length; i++) {
         var c = ca[i];

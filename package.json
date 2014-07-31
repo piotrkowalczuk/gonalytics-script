@@ -1,5 +1,5 @@
 {
-  "name": "gowik",
+  "name": "gonalytics",
   "devDependencies": {
     "grunt-contrib-watch": "^0.6.1",
     "grunt-contrib-jshint": "^0.10.0",

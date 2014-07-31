@@ -1,13 +1,13 @@
 {
-  "name": "gowik-script",
+  "name": "gonalytics-script",
   "version": "0.0.1",
   "authors": [
     "Piotr Kowalczuk <p.kowalczuk.priv@gmail.com>"
   ],
   "description": "Frontend part of Gowik analytic tool.",
-  "main": "gowik.js",
+  "main": "gonalytics.js",
   "keywords": [
-    "gowik",
+    "gonalytics",
     "analytic",
     "tracking",
     "pixel"

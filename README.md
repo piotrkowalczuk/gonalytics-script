@@ -9,8 +9,10 @@ Gonalytic is a open source web analytics application. It consists of:
 Installation
 ------------
     <script type="text/javascript" src="/path-to/gonalytics.min.js"></script>
-    var gonalytics = new Gonalytics('http://tracker.addres', siteId);
-    gonalytics.push();
+    <script>
+        var gonalytics = new Gonalytics('http://tracker.addres', siteId);
+        gonalytics.push();
+    <script>
 
 Setup
 --------

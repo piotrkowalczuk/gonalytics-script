@@ -1,12 +1,12 @@
-function Gonalytics(gowikHost, siteId) {
+function Gonalytics(host, siteId) {
     var browser = this.getBrowser();
     var device = this.getDevice();
     var operatingSystem = this.getOperatingSystem();
 
-    this.gowikHost = gowikHost;
+    this.host = host;
     this.siteId = siteId;
     this.values = {
-        trackerSiteId: {
+        siteId: {
             value: this.siteId,
             sname: 't.sid'
         },
@@ -110,26 +110,34 @@ function Gonalytics(gowikHost, siteId) {
 };
 
 Gonalytics.prototype.push = function() {
+    var _this = this;
     var xmlHttp = new XMLHttpRequest();
 
     xmlHttp.open("GET", this.getUrl(), true);
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState==4 && xmlHttp.status==200) {
-            var gonalyticsVisitId = xmlHttp.getResponseHeader('Gonalytics-Visit-Id');
-            var expiry = new Date();
-            expiry.setTime(expiry.getTime()+(60*1000*3)); // 30 minutes
-            document.cookie = "gowikVisitId="+gowikVisitId+";expires=" + expiry.toGMTString()+";path=/";
+            var visitId = xmlHttp.getResponseHeader('Gonalytics-Visit-Id');
+
+            _this.setCookie('gonalyticsVisitId', visitId, (60*1000*30), '/')
         }
     }
     xmlHttp.send(null);
+    
     return;
+}
+
+Gonalytics.prototype.setCookie = function(name, value, expiration, path) {
+    var d = new Date();
+    d.setTime(d.getTime() + expiration);
+    var expires = "expires="+d.toUTCString();
+    document.cookie = name + "=" + value + "; " + expires+'; path='+path;
 }
 
 Gonalytics.prototype.getUrl = function() {
     var now = new Date().getTime();
     var random = Math.random() * 99999999999;
 
-    return this.gowikHost + '/track?' + this.mapValuesToQueryString();
+    return this.host + '/visit?' + this.mapValuesToQueryString();
 }
 
 Gonalytics.prototype.mapValuesToQueryString = function() {
@@ -145,26 +153,24 @@ Gonalytics.prototype.mapValuesToQueryString = function() {
 
 Gonalytics.prototype.getLanguage = function() {
     if (typeof navigator.userLanguage == "string") {
-	       return(navigator.userLanguage);
+           return(navigator.userLanguage);
     } else if (typeof navigator.language == "string") {
-	       return(navigator.language);
+           return(navigator.language);
     } else {
-	       return("(Not supported)");
+           return("(Not supported)");
     }
 }
 
 Gonalytics.prototype.getBrowser = function() {
-    var
-        nAgt = navigator.userAgent,                         // store user agent [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0]
-        browser = navigator.appName,                        // browser string [Netscape]
-        version = '' + parseFloat(navigator.appVersion),    // version string (5) [5.0 (Windows)]
-        majorVersion = parseInt(navigator.appVersion, 10)   // version number (5) [5.0 (Windows)]
-    ;
+    var nAgt = navigator.userAgent;                         // store user agent [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0]
+    var browser = navigator.appName;                        // browser string [Netscape]
+    var version = '' + parseFloat(navigator.appVersion);    // version string (5) [5.0 (Windows)]
+    var majorVersion = parseInt(navigator.appVersion, 10);   // version number (5) [5.0 (Windows)]
+    
 
-    var nameOffset, // used to detect other browsers name
-        verOffset,  // used to trim out version
-        ix          // used to trim string
-    ;
+    var nameOffset; // used to detect other browsers name
+    var verOffset;  // used to trim out version
+    var ix;          // used to trim string
 
     // Opera
     if ((verOffset = nAgt.indexOf('Opera')) !== -1) {
@@ -249,46 +255,44 @@ Gonalytics.prototype.getBrowser = function() {
 }
 
 Gonalytics.prototype.getDevice = function () {
-    var
-        i,
-        nVer = navigator.appVersion,
-        nAgt = navigator.userAgent,
-        tabletStrings = [
-             { s: 'iPad', r: /iPad/ },
-             { s: 'Samsung Galaxy', r: /SCH-I800/ },
-             { s: 'Motorola', r: /xoom/ },
-             { s: 'Kindle', r: /kindle/ }
-        ],
-        phoneStrings = [
-             { s: 'iPhone', r: /iPhone/ },
-             { s: 'iPod', r: /iPod/ },
-             { s: 'blackberry', r: /blackberry/ },
-             { s: 'android 0.5', r: /android 0.5/ },
-             { s: 'htc', r: /htc/ },
-             { s: 'lg', r: /lg/ },
-             { s: 'midp', r: /midp/ },
-             { s: 'mmp', r: /mmp/ },
-             { s: 'mobile', r: /mobile/ },
-             { s: 'nokia', r: /nokia/ },
-             { s: 'opera mini', r: /opera mini/ },
-             { s: 'palm', r: /palm|PalmSource/ },
-             { s: 'pocket', r: /pocket/ },
-             { s: 'psp', r: /psp|Playstation Portable/ },
-             { s: 'sgh', r: /sgh/ },
-             { s: 'smartphone', r: /smartphone/ },
-             { s: 'symbian', r: /symbian/ },
-             { s: 'treo mini', r: /treo mini/ },
-             { s: 'SonyEricsson', r: /SonyEricsson/ },
-             { s: 'Samsung', r: /Samsung/ },
-             { s: 'MobileExplorer', r: /MobileExplorer/ },
-             { s: 'Benq', r: /Benq/ },
-             { s: 'Windows Phone', r: /Windows Phone/ },
-             { s: 'Windows Mobile', r: /Windows Mobile/ },
-             { s: 'IEMobile', r: /IEMobile/ },
-             { s: 'Windows CE', r: /Windows CE/ },
-             { s: 'Nintendo Wii', r: /Nintendo Wii/ }
-        ]
-    ;
+    var i;
+    var nVer = navigator.appVersion;
+    var nAgt = navigator.userAgent;
+    var tabletStrings = [
+         { s: 'iPad', r: /iPad/ },
+         { s: 'Samsung Galaxy', r: /SCH-I800/ },
+         { s: 'Motorola', r: /xoom/ },
+         { s: 'Kindle', r: /kindle/ }
+    ];  
+    var phoneStrings = [
+         { s: 'iPhone', r: /iPhone/ },
+         { s: 'iPod', r: /iPod/ },
+         { s: 'blackberry', r: /blackberry/ },
+         { s: 'android 0.5', r: /android 0.5/ },
+         { s: 'htc', r: /htc/ },
+         { s: 'lg', r: /lg/ },
+         { s: 'midp', r: /midp/ },
+         { s: 'mmp', r: /mmp/ },
+         { s: 'mobile', r: /mobile/ },
+         { s: 'nokia', r: /nokia/ },
+         { s: 'opera mini', r: /opera mini/ },
+         { s: 'palm', r: /palm|PalmSource/ },
+         { s: 'pocket', r: /pocket/ },
+         { s: 'psp', r: /psp|Playstation Portable/ },
+         { s: 'sgh', r: /sgh/ },
+         { s: 'smartphone', r: /smartphone/ },
+         { s: 'symbian', r: /symbian/ },
+         { s: 'treo mini', r: /treo mini/ },
+         { s: 'SonyEricsson', r: /SonyEricsson/ },
+         { s: 'Samsung', r: /Samsung/ },
+         { s: 'MobileExplorer', r: /MobileExplorer/ },
+         { s: 'Benq', r: /Benq/ },
+         { s: 'Windows Phone', r: /Windows Phone/ },
+         { s: 'Windows Mobile', r: /Windows Mobile/ },
+         { s: 'IEMobile', r: /IEMobile/ },
+         { s: 'Windows CE', r: /Windows CE/ },
+         { s: 'Nintendo Wii', r: /Nintendo Wii/ }
+    ];
 
 
     var is_tablet= false,
@@ -398,7 +402,7 @@ Gonalytics.prototype.getOperatingSystem = function () {
 }
 
 Gonalytics.prototype.getVisitId = function () {
-    var name = "gowikVisitId=";
+    var name = "gonalyticsVisitId=";
     var ca = document.cookie.split(';');
     for(var i=0; i<ca.length; i++) {
         var c = ca[i];
